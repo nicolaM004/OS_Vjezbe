@@ -53,3 +53,52 @@ Funkcionalnosti
 
 Cilj:
 Cilj zadatka je demonstrirati međusobno isključivanje među dretvama koristeći Lamportov pristup i simulirati konkurentnu rezervaciju zajedničkih resursa (stolova) bez konflikta i kolizije.
+
+
+4. Vrtuljak – Upravljanje pristupom pomoću semafora
+
+Opis
+Program simulira rad vrtuljka s ograničenim brojem sjedećih mjesta koristeći POSIX semafore za kontrolu pristupa posjetitelja. Vrtuljak prima najviše `N = 5` posjetitelja odjednom, a ostatak čeka na slobodno mjesto. Kada su sva mjesta popunjena, vrtuljak se "okreće", a zatim se sjedeća mjesta ponovno oslobađaju.
+
+Funkcionalnosti
+
+- Vrtuljak ima `N = 5` mjesta koja posjetitelji mogu zauzeti.
+- Pokreće se jedan proces koji upravlja vrtuljkom (`vrtuljak`).
+- Kreira se `M = 15` posjetitelja (procesa) koji čekaju na ulaz u vrtuljak.
+- Svaki posjetitelj:
+  - Čeka slobodno mjesto pomoću semafora (`sem_wait`).
+  - Kada uđe u vrtuljak, ostaje unutar njega određeno vrijeme (3 sekunde).
+- Proces `vrtuljak`:
+  - Kontinuirano provjerava broj slobodnih mjesta pomoću `sem_getvalue`.
+  - Kada su sva mjesta zauzeta, simulira vožnju (3 sekunde).
+  - Po završetku vožnje oslobađa svih `N` mjesta pomoću `sem_post`.
+- Semafor se inicijalizira i uništava u glavnom procesu.
+- Korišten je named semafor (`sem_open`) radi dijeljenja semafora među procesima.
+
+Cilj
+
+Cilj programa je demonstrirati sinkronizaciju među višestrukim procesima pomoću POSIX semafora. Program simulira situaciju gdje je broj dostupnih resursa (sjedećih mjesta) ograničen i višestruki korisnici (posjetitelji) ih konkurentno pokušavaju koristiti. Vrtuljak se aktivira tek kad su sva mjesta popunjena, čime se prikazuje koordinacija i pravilno upravljanje pristupom zajedničkom resursu.
+
+
+5. Filozofi – Problem filozofa s semaforima
+Opis
+Program simulira problem pet filozofa oko okruglog stola koristeći POSIX semafore za sprječavanje mrtve petlje. Svaki filozof mora uzeti dvije vilice da bi jeo.
+
+Funkcionalnosti
+5 filozofa (dretvi) i 5 viličica
+Svaki filozof:
+Mislí → postane gladan → pokuša uzeti vilice → jede → vraća vilice
+
+Korišten semafor mutex za zaštitu kritične sekcije
+
+Funkcije test(), uzima_vilicu() i vrati_vilice() upravljaju stanjem filozofa
+
+Cilj
+Demonstrirati pravilnu sinkronizaciju dretvi kako bi se izbjegli:
+Mrtva petlja (deadlock)
+Izgladnjivanje (starvation)
+
+Program pokazuje kako semafori omogućuju sigurno dijeljenje resursa (viličica) između više dretvi.
+
+
+
